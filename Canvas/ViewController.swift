@@ -128,6 +128,11 @@ class ViewController: UIViewController {
       rotationGesture.delegate = self
       newlyCreatedFace.addGestureRecognizer(rotationGesture)
 
+      // Add double tap gesture for this new face
+      let doubleTapGesture = UITapGestureRecognizer(target: self, action: #selector(ViewController.onNewFaceDoubleTapGesture(_:)))
+      doubleTapGesture.numberOfTapsRequired = 2
+      newlyCreatedFace.addGestureRecognizer(doubleTapGesture)
+
     case .Changed:
       translation = sender.translationInView(view)
       newlyCreatedFace.center = CGPoint(x: initialNewFaceCenter.x + translation.x, y: initialNewFaceCenter.y + translation.y)
@@ -177,6 +182,12 @@ class ViewController: UIViewController {
     if let currentFace = sender.view {
       currentFace.transform = CGAffineTransformRotate(currentFace.transform, sender.rotation)
       sender.rotation = 0
+    }
+  }
+
+  func onNewFaceDoubleTapGesture(sender: UITapGestureRecognizer) {
+    if let currentFace = sender.view {
+      currentFace.removeFromSuperview()
     }
   }
   
