@@ -80,6 +80,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
+                        <outlet property="arrowImageView" destination="1WF-G8-HHx" id="Sbe-oT-exs"/>
                         <outlet property="trayView" destination="SJI-a2-jAB" id="zpK-HJ-5BG"/>
                     </connections>
                 </viewController>

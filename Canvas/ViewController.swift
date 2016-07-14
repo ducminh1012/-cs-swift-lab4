@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
   @IBOutlet weak var trayView: UIView!
+  @IBOutlet weak var arrowImageView: UIImageView!
 
   var trayOriginalCenter: CGPoint!
   var trayCenterWhenOpen: CGPoint!
@@ -20,6 +21,8 @@ class ViewController: UIViewController {
   var initialNewFaceCenter: CGPoint!
 
   var initialCurrentFaceCenter: CGPoint!
+
+  var isArrowDown = true
 
   override func viewDidLoad() {
     super.viewDidLoad()
@@ -35,21 +38,47 @@ class ViewController: UIViewController {
     switch state {
     case .Began:
       trayOriginalCenter = trayView.center
+
     case .Changed:
       translation = panGestureRecognizer.translationInView(view)
       trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
+
+      let velocity = panGestureRecognizer.velocityInView(view)
+      if velocity.y < 0 {
+        if isArrowDown {
+          arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
+          isArrowDown = false
+        }
+      } else {
+        if !isArrowDown {
+          arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
+          isArrowDown = true
+        }
+      }
+
     case .Ended:
       let velocity = panGestureRecognizer.velocityInView(view)
       if velocity.y > 0 {
         // Close the tray
         trayView.center = trayCenterWhenClosed
+
+        if isArrowDown {
+          arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
+          isArrowDown = false
+        }
       } else {
         // Open the tray
         UIView.animateWithDuration(2, delay: 0, usingSpringWithDamping: 0.1, initialSpringVelocity: 2, options: [], animations: { () -> Void in
           self.trayView.center = self.trayCenterWhenOpen
+
+          if !self.isArrowDown {
+            self.arrowImageView.transform = CGAffineTransformRotate(self.arrowImageView.transform, CGFloat(M_PI))
+            self.isArrowDown = true
+          }
           }, completion: { (bool) -> Void in
         })
       }
+
     default:
       break
     }
