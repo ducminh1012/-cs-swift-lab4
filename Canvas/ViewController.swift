@@ -25,18 +25,15 @@ class ViewController: UIViewController {
 
   @IBAction func onTrayPanGesture(panGestureRecognizer: UIPanGestureRecognizer) {
     let state = panGestureRecognizer.state
-    let point = panGestureRecognizer.locationInView(view)
     var translation: CGPoint!
 
-    if state == UIGestureRecognizerState.Began {
-      print("Gesture began at: \(point)")
+    switch state {
+    case .Began:
       trayOriginalCenter = trayView.center
-    } else if state == UIGestureRecognizerState.Changed {
-      print("Gesture changed at: \(point)")
+    case .Changed:
       translation = panGestureRecognizer.translationInView(view)
       trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
-    } else if state == UIGestureRecognizerState.Ended {
-      print("Gesture ended at: \(point)")
+    case .Ended:
       let velocity = panGestureRecognizer.velocityInView(view)
       if velocity.y > 0 {
         // Close the tray
@@ -48,6 +45,8 @@ class ViewController: UIViewController {
           }, completion: { (bool) -> Void in
         })
       }
+    default:
+      break
     }
   }
 
