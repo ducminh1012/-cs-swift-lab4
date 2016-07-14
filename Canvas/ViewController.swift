@@ -85,6 +85,10 @@ class ViewController: UIViewController {
       newlyCreatedFace.userInteractionEnabled = true
       let panGesture = UIPanGestureRecognizer(target: self, action: #selector(ViewController.onNewFacePanGesture(_:)))
       newlyCreatedFace.addGestureRecognizer(panGesture)
+
+      // Add pinch gesture for this new face
+      let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(ViewController.onNewFacePinchGesture(_:)))
+      newlyCreatedFace.addGestureRecognizer(pinchGesture)
     case .Changed:
       translation = sender.translationInView(view)
       newlyCreatedFace.center = CGPoint(x: initialNewFaceCenter.x + translation.x, y: initialNewFaceCenter.y + translation.y)
@@ -109,6 +113,13 @@ class ViewController: UIViewController {
       default:
         break
       }
+    }
+  }
+
+  func onNewFacePinchGesture(sender: UIPinchGestureRecognizer) {
+    if let currentFace = sender.view {
+      currentFace.transform = CGAffineTransformScale(currentFace.transform, sender.scale, sender.scale)
+      sender.scale = 1
     }
   }
   
