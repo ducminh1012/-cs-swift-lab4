@@ -89,11 +89,19 @@ class ViewController: UIViewController {
       // Add pinch gesture for this new face
       let pinchGesture = UIPinchGestureRecognizer(target: self, action: #selector(ViewController.onNewFacePinchGesture(_:)))
       newlyCreatedFace.addGestureRecognizer(pinchGesture)
+
+      // Add rotation gesture for this new face
+      let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(ViewController.onNewFaceRotationGesture(_:)))
+      rotationGesture.delegate = self
+      newlyCreatedFace.addGestureRecognizer(rotationGesture)
+
     case .Changed:
       translation = sender.translationInView(view)
       newlyCreatedFace.center = CGPoint(x: initialNewFaceCenter.x + translation.x, y: initialNewFaceCenter.y + translation.y)
+
     case .Ended:
       newlyCreatedFace.transform = CGAffineTransformMakeScale(1, 1)
+
     default:
       break
     }
@@ -122,5 +130,18 @@ class ViewController: UIViewController {
       sender.scale = 1
     }
   }
+
+  func onNewFaceRotationGesture(sender: UIRotationGestureRecognizer) {
+    if let currentFace = sender.view {
+      currentFace.transform = CGAffineTransformRotate(currentFace.transform, sender.rotation)
+      sender.rotation = 0
+    }
+  }
   
+}
+
+extension ViewController: UIGestureRecognizerDelegate {
+  func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+    return true
+  }
 }
