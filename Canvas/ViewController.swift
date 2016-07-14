@@ -21,6 +21,7 @@ class ViewController: UIViewController {
   var initialNewFaceCenter: CGPoint!
 
   var initialCurrentFaceCenter: CGPoint!
+  var originalFaceCenter: CGPoint!
 
   var isArrowDown = true
 
@@ -93,6 +94,9 @@ class ViewController: UIViewController {
       // Gesture recognizers know the view they are attached to
       let imageView = sender.view as! UIImageView
 
+      // Save the center of original face
+      originalFaceCenter = trayView.convertPoint(imageView.center, toView: view)
+
       // Create a new image view that has the same image as the one currently panning
       newlyCreatedFace = UIImageView(image: imageView.image)
 
@@ -129,7 +133,16 @@ class ViewController: UIViewController {
       newlyCreatedFace.center = CGPoint(x: initialNewFaceCenter.x + translation.x, y: initialNewFaceCenter.y + translation.y)
 
     case .Ended:
-      newlyCreatedFace.transform = CGAffineTransformMakeScale(1, 1)
+      if newlyCreatedFace.center.y < trayView.frame.origin.y {
+        newlyCreatedFace.transform = CGAffineTransformIdentity
+      } else {
+        UIView.animateWithDuration(0.5, animations: {
+          self.newlyCreatedFace.transform = CGAffineTransformIdentity
+          self.newlyCreatedFace.center = self.originalFaceCenter
+          }, completion: { finished in
+            self.newlyCreatedFace.removeFromSuperview()
+        })
+      }
 
     default:
       break
