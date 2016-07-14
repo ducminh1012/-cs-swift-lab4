@@ -42,15 +42,20 @@ class ViewController: UIViewController {
 
     case .Changed:
       translation = panGestureRecognizer.translationInView(view)
-      trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
-
       let velocity = panGestureRecognizer.velocityInView(view)
+
       if velocity.y < 0 {
+        if trayView.center.y > trayCenterWhenOpen.y {
+            trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
+        } else {
+          trayView.center = CGPoint(x: trayCenterWhenOpen.x, y: trayCenterWhenOpen.y + translation.y / 10)
+        }
         if isArrowDown {
           arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
           isArrowDown = false
         }
       } else {
+        trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
         if !isArrowDown {
           arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
           isArrowDown = true
