@@ -97,6 +97,7 @@
 					A5DCC49F1D372DF100BA18FA = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = D3E7UH3PXS;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -256,6 +257,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cheetah.Canvas;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -267,6 +269,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = cheetah.Canvas;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -289,6 +292,7 @@
 				A5DCC4B41D372DF100BA18FA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

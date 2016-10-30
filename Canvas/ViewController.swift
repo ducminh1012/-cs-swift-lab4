@@ -32,17 +32,17 @@ class ViewController: UIViewController {
     trayCenterWhenClosed = CGPoint(x: 160, y: 617)
   }
 
-  @IBAction func onTrayPanGesture(panGestureRecognizer: UIPanGestureRecognizer) {
+  @IBAction func onTrayPanGesture(_ panGestureRecognizer: UIPanGestureRecognizer) {
     let state = panGestureRecognizer.state
     var translation: CGPoint!
 
     switch state {
-    case .Began:
+    case .began:
       trayOriginalCenter = trayView.center
 
-    case .Changed:
-      translation = panGestureRecognizer.translationInView(view)
-      let velocity = panGestureRecognizer.velocityInView(view)
+    case .changed:
+      translation = panGestureRecognizer.translation(in: view)
+      let velocity = panGestureRecognizer.velocity(in: view)
 
       if velocity.y < 0 {
         if trayView.center.y > trayCenterWhenOpen.y {
@@ -51,34 +51,34 @@ class ViewController: UIViewController {
           trayView.center = CGPoint(x: trayCenterWhenOpen.x, y: trayCenterWhenOpen.y + translation.y / 10)
         }
         if isArrowDown {
-          arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
+          arrowImageView.transform = arrowImageView.transform.rotated(by: CGFloat(M_PI))
           isArrowDown = false
         }
       } else {
         trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
         if !isArrowDown {
-          arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
+          arrowImageView.transform = arrowImageView.transform.rotated(by: CGFloat(M_PI))
           isArrowDown = true
         }
       }
 
-    case .Ended:
-      let velocity = panGestureRecognizer.velocityInView(view)
+    case .ended:
+      let velocity = panGestureRecognizer.velocity(in: view)
       if velocity.y > 0 {
         // Close the tray
         trayView.center = trayCenterWhenClosed
 
         if isArrowDown {
-          arrowImageView.transform = CGAffineTransformRotate(arrowImageView.transform, CGFloat(M_PI))
+          arrowImageView.transform = arrowImageView.transform.rotated(by: CGFloat(M_PI))
           isArrowDown = false
         }
       } else {
         // Open the tray
-        UIView.animateWithDuration(2, delay: 0, usingSpringWithDamping: 0.1, initialSpringVelocity: 2, options: [], animations: { () -> Void in
+        UIView.animate(withDuration: 2, delay: 0, usingSpringWithDamping: 0.1, initialSpringVelocity: 2, options: [], animations: { () -> Void in
           self.trayView.center = self.trayCenterWhenOpen
 
           if !self.isArrowDown {
-            self.arrowImageView.transform = CGAffineTransformRotate(self.arrowImageView.transform, CGFloat(M_PI))
+            self.arrowImageView.transform = self.arrowImageView.transform.rotated(by: CGFloat(M_PI))
             self.isArrowDown = true
           }
           }, completion: { (bool) -> Void in
@@ -90,17 +90,17 @@ class ViewController: UIViewController {
     }
   }
 
-  @IBAction func onFacePanGesture(sender: UIPanGestureRecognizer) {
+  @IBAction func onFacePanGesture(_ sender: UIPanGestureRecognizer) {
     let state = sender.state
     var translation: CGPoint!
 
     switch state {
-    case .Began:
+    case .began:
       // Gesture recognizers know the view they are attached to
       let imageView = sender.view as! UIImageView
 
       // Save the center of original face
-      originalFaceCenter = trayView.convertPoint(imageView.center, toView: view)
+      originalFaceCenter = trayView.convert(imageView.center, to: view)
 
       // Create a new image view that has the same image as the one currently panning
       newlyCreatedFace = UIImageView(image: imageView.image)
@@ -112,7 +112,7 @@ class ViewController: UIViewController {
       newlyCreatedFace.center = imageView.center
 
       // Make the face bigger
-      newlyCreatedFace.transform = CGAffineTransformMakeScale(2, 2)
+      newlyCreatedFace.transform = CGAffineTransform(scaleX: 2, y: 2)
 
       // Since the original face is in the tray, but the new face is in the
       // main view, you have to offset the coordinates
@@ -120,7 +120,7 @@ class ViewController: UIViewController {
       initialNewFaceCenter = newlyCreatedFace.center
 
       // Add pan gesture for this new face
-      newlyCreatedFace.userInteractionEnabled = true
+      newlyCreatedFace.isUserInteractionEnabled = true
       let panGesture = UIPanGestureRecognizer(target: self, action: #selector(ViewController.onNewFacePanGesture(_:)))
       newlyCreatedFace.addGestureRecognizer(panGesture)
 
@@ -138,16 +138,16 @@ class ViewController: UIViewController {
       doubleTapGesture.numberOfTapsRequired = 2
       newlyCreatedFace.addGestureRecognizer(doubleTapGesture)
 
-    case .Changed:
-      translation = sender.translationInView(view)
+    case .changed:
+      translation = sender.translation(in: view)
       newlyCreatedFace.center = CGPoint(x: initialNewFaceCenter.x + translation.x, y: initialNewFaceCenter.y + translation.y)
 
-    case .Ended:
+    case .ended:
       if newlyCreatedFace.center.y < trayView.frame.origin.y {
-        newlyCreatedFace.transform = CGAffineTransformIdentity
+        newlyCreatedFace.transform = CGAffineTransform.identity
       } else {
-        UIView.animateWithDuration(0.5, animations: {
-          self.newlyCreatedFace.transform = CGAffineTransformIdentity
+        UIView.animate(withDuration: 0.5, animations: {
+          self.newlyCreatedFace.transform = CGAffineTransform.identity
           self.newlyCreatedFace.center = self.originalFaceCenter
           }, completion: { finished in
             self.newlyCreatedFace.removeFromSuperview()
@@ -159,16 +159,16 @@ class ViewController: UIViewController {
     }
   }
 
-  func onNewFacePanGesture(sender: UIPanGestureRecognizer) {
+  func onNewFacePanGesture(_ sender: UIPanGestureRecognizer) {
     if let currentFace = sender.view {
       let state = sender.state
       var translation: CGPoint!
 
       switch state {
-      case .Began:
+      case .began:
         initialCurrentFaceCenter = currentFace.center
-      case .Changed:
-        translation = sender.translationInView(view)
+      case .changed:
+        translation = sender.translation(in: view)
         currentFace.center = CGPoint(x: initialCurrentFaceCenter.x + translation.x, y: initialCurrentFaceCenter.y + translation.y)
       default:
         break
@@ -176,21 +176,21 @@ class ViewController: UIViewController {
     }
   }
 
-  func onNewFacePinchGesture(sender: UIPinchGestureRecognizer) {
+  func onNewFacePinchGesture(_ sender: UIPinchGestureRecognizer) {
     if let currentFace = sender.view {
-      currentFace.transform = CGAffineTransformScale(currentFace.transform, sender.scale, sender.scale)
+      currentFace.transform = currentFace.transform.scaledBy(x: sender.scale, y: sender.scale)
       sender.scale = 1
     }
   }
 
-  func onNewFaceRotationGesture(sender: UIRotationGestureRecognizer) {
+  func onNewFaceRotationGesture(_ sender: UIRotationGestureRecognizer) {
     if let currentFace = sender.view {
-      currentFace.transform = CGAffineTransformRotate(currentFace.transform, sender.rotation)
+      currentFace.transform = currentFace.transform.rotated(by: sender.rotation)
       sender.rotation = 0
     }
   }
 
-  func onNewFaceDoubleTapGesture(sender: UITapGestureRecognizer) {
+  func onNewFaceDoubleTapGesture(_ sender: UITapGestureRecognizer) {
     if let currentFace = sender.view {
       currentFace.removeFromSuperview()
     }
@@ -199,7 +199,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: UIGestureRecognizerDelegate {
-  func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+  func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
     return true
   }
 }
